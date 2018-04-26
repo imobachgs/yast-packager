@@ -1546,7 +1546,7 @@ module Yast
         sp_url = Ops.add("dir:", spdir)
         # close the popup in order to be able to ask about the license
         UI.CloseDialog if popup_open
-        sp_source = Pkg.SourceCreate(sp_url, "")
+        sp_source = Y2Packager::PkgHelpers.source_create(sp_url, "")
         if sp_source == -1
           Report.Error(_("Failed to integrate the service pack repository."))
           return nil

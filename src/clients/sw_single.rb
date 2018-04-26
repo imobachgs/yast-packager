@@ -203,7 +203,7 @@ module Yast
 
         return :failed if url == ""
 
-        repo_id = Pkg.SourceCreateType(url, "", "Plaindir")
+        repo_id = Y2Packager::PkgHelpers.source_create_type(url, "", "Plaindir")
         Builtins.y2milestone("Adde temporary repository with ID %1", repo_id)
 
         if repo_id.nil?

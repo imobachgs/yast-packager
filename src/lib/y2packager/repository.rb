@@ -102,7 +102,7 @@ module Y2Packager
       # @param url         [URI::Generic] Repository URL
       # @return [Y2Packager::Repository,nil] New repository or nil if creation failed
       def create(name:, url:, enabled: true, autorefresh: true)
-        repo_id = Yast::Pkg.RepositoryAdd(
+        repo_id = Y2Packager::PkgHelpers.repository_add(
           "name" => name, "base_urls" => [url], "enabled" => enabled, "autorefresh" => autorefresh
         )
         return nil unless repo_id

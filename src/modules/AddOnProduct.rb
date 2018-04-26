@@ -1344,7 +1344,7 @@ module Yast
       new_repo["priority"] = priority if priority > -1
 
       log.info "Adding Repository: #{URL.HidePassword(url)}, product path: #{pth}"
-      new_repo_id = Pkg.RepositoryAdd(new_repo)
+      new_repo_id = Y2Packager::PkgHelpers.repository_add(new_repo)
       log.info "New repository id: #{new_repo_id}"
 
       if new_repo_id.nil? || new_repo_id < 0
@@ -1360,6 +1360,8 @@ module Yast
       Pkg.SourceRefreshNow(new_repo_id)
       # load resolvables to zypp pool
       Pkg.SourceLoad
+      # set the url to the unescaped one
+      Pkg.SourceChangeUrl(new_repo_id, url)
 
       new_repo_id
     end
@@ -1610,12 +1612,9 @@ module Yast
       Builtins.foreach(@add_on_products) do |prod|
         Builtins.y2milestone("Add-on product: %1", prod)
         pth = Ops.get_string(prod, "product_dir", "/")
-        url = SetRepoUrlAlias(
-          Ops.get_string(prod, "media_url", ""),
-          Ops.get_string(prod, "alias", ""),
-          Ops.get_string(prod, "name", "")
+        src = Y2Packager::PkgHelper.source_create(
+          url, pth, alias_name: prod["alias"], name: prod["name"]
         )
-        src = Pkg.SourceCreate(url, pth)
         if src != -1
           if Ops.get_string(prod, "product", "") != ""
             repo = {
